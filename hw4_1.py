@@ -1,3 +1,6 @@
+from collections import defaultdict
+from collections import deque
+
 # Import nickname list
 nicknames = {}
 with open("nicknames.txt", 'r') as f:
@@ -7,28 +10,24 @@ with open("nicknames.txt", 'r') as f:
 
 
 # Import link list
-links = {}
+links = defaultdict(list)
 with open("links.txt", 'r') as f:
     for line in f:
         x, y = map(int,line.split())
-        if x in links:
-            links[x].append(y)
-        else:
-            links[x] = [y]
+        links[x].append(y)
 
 
 # Breadth first search
 def search_target(start, goal):
-    queue = [start]
-    check = [start]
+    queue = deque([start])
+    checked = {start}
     count = 0
     while(len(queue)>0):
-        #print(queue[0], links[queue[0]])
-        queue += list(set(links[queue[0]]) - set(check))
-        if(goal in check):
+        if goal in checked:
             return count
-        check += list(set(links[queue[0]]) - set(check))
-        queue.pop(0)
+        print(queue[0], links[queue[0]])
+        queue += list(set(links[queue[0]]) - checked)
+        queue.popleft()
         count += 1
     return ("Not found")
 
